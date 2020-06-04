@@ -1766,6 +1766,42 @@ namespace Azure.Storage.Blobs.Test
             Assert.AreEqual(setMetadataResponse.Value.VersionId, blobs[1].VersionId);
         }
 
+        // TODO: Recorded Only
+        [Test]
+        [ServiceVersion(Min = BlobClientOptions.ServiceVersion.V2019_12_12)]
+        public async Task ListBlobsFlatSegmentAsync_ObjectReplication()
+        {
+            // TODO: The tests will temporarily use designated account, containers and blobs to check the
+            // existence of OR Metadata
+            BlobServiceClient sourceServiceClient = GetServiceClient_SharedKey();
+            BlobServiceClient destinationServiceClient = GetServiceClient_SecondaryAccount_SharedKey();
+
+            // This is a recorded ONLY test with a special container we previously setup, as we can't auto setup policies yet
+            BlobContainerClient sourceContainer = InstrumentClient(sourceServiceClient.GetBlobContainerClient("test1"));
+
+            // Arrange
+            string blob_name = "netgetpropertiesors2blobapitestgetpropertiesors";
+            BlobClient sourceBlob = sourceContainer.GetBlobClient(blob_name);
+
+            // Act
+            IList<BlobItem> blobs = await sourceContainer.GetBlobsAsync().ToListAsync();
+
+            // Assert
+            List<string> names = new List<string>();
+            foreach (BlobItem pathItem in blobs)
+            {
+                names.Add(pathItem.Name);
+                if (string.Equals(pathItem.Name, blob_name))
+                {
+                    Assert.IsNotNull(pathItem.ObjectReplicationSourceProperties);
+                }
+            }
+            // Because this is a storage container we previously setup with ORS enabled, we need to check if the blob
+            // we uploaded with the policies applied exist, or we could possibly pass this test without seeing the blob
+            // and checking for the OrMetadata
+            Assert.Contains(blob_name, names);
+        }
+
         [Test]
         public async Task ListBlobsHierarchySegmentAsync()
         {

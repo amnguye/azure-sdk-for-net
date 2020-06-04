@@ -60,7 +60,10 @@ namespace Azure.Storage.Blobs
                 Metadata = blobItemInternal.Metadata?.Count > 0
                     ? blobItemInternal.Metadata
                     : null,
-                Tags = blobItemInternal.BlobTags.ToTagDictionary()
+                Tags = blobItemInternal.BlobTags.ToTagDictionary(),
+                ObjectReplicationSourceProperties = blobItemInternal.Metadata?.Count > 0
+                ? ParseObjectReplicationMetadata(blobItemInternal.ObjectReplicationMetadata)
+                : null
             };
         }
 
@@ -162,13 +165,13 @@ namespace Azure.Storage.Blobs
         /// If the blob has object replication policy applied and is the destination blob,
         /// this method will return default as the policy id should be set in ObjectReplicationDestinationPolicy
         /// (e.g. <see cref="BlobProperties.ObjectReplicationDestinationPolicy"/>,<see cref="BlobDownloadDetails.ObjectReplicationDestinationPolicy"/>).
-        /// Otherwise null will be returned.
+        /// Otherwise <c>null</c> will be returned.
         /// </returns>
         internal static IDictionary<string, IDictionary<string, string>> ParseObjectReplicationIds(this IDictionary<string, string> OrIds)
         {
             if (OrIds == null)
             {
-                return null;
+                return default;
             }
             // If the dictionary is empty or it contains a key with policy id, we are not required to do any parsing since
             // the policy id should already be stored in the ObjectReplicationDestinationPolicy.
@@ -182,6 +185,45 @@ namespace Azure.Storage.Blobs
             foreach (KeyValuePair<string, string> status in OrIds)
             {
                 string[] ParsedIds = status.Key.Split('_');
+                if (OrProperties.ContainsKey(ParsedIds[0]))
+                {
+                    OrProperties[ParsedIds[0]].Add(ParsedIds[1], status.Value);
+                }
+                else
+                {
+                    IDictionary<string, string> NewRuleStatus = new Dictionary<string, string>();
+                    NewRuleStatus.Add(ParsedIds[1], status.Value);
+                    OrProperties.Add(ParsedIds[0], NewRuleStatus);
+                }
+            }
+            return OrProperties;
+        }
+
+        /// <summary>
+        /// Internal. Parses Object Replication Policy ID from Rule ID and sets the Policy ID for source blobs.
+        /// </summary>
+        /// <param name="OrMetadata">
+        /// Unparsed Object Replication headers.
+        /// For source blobs, the dictionary will contain keys that are prefixed with "or-" and followed by the
+        /// policy id and rule id separated by a underscore (e.g. or-policyId_ruleId).
+        /// The value of this metadata key will be the replication status (e.g. Complete, Failed).
+        /// </param>
+        /// <returns>
+        /// If the blob has object replication policy(s) applied and is the source blob, this method will return a
+        /// dictionary of policy Ids, with a dictionary of rules and replication status for each policy
+        /// (As each policy id, could have multiple rule ids).
+        /// Otherwise <c>null</c> will be returned.
+        /// </returns>
+        internal static IDictionary<string, IDictionary<string, string>> ParseObjectReplicationMetadata(this IDictionary<string, string> OrMetadata)
+        {
+            IDictionary<string, IDictionary<string, string>> OrProperties = new Dictionary<string, IDictionary<string, string>>();
+            foreach (KeyValuePair<string, string> status in OrMetadata)
+            {
+                string[] ParsedIds = status.Key.Split('_');
+                if (ParsedIds[0].StartsWith("or-", System.StringComparison.InvariantCulture))
+                {
+                    ParsedIds[0] = ParsedIds[0].Substring("or-".Length);
+                }
                 if (OrProperties.ContainsKey(ParsedIds[0]))
                 {
                     OrProperties[ParsedIds[0]].Add(ParsedIds[1], status.Value);

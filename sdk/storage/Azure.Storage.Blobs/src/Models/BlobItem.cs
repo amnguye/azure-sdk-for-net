@@ -53,5 +53,10 @@ namespace Azure.Storage.Blobs.Models
         /// Tags.
         /// </summary>
         public IDictionary<string, string> Tags { get; internal set; }
+
+        /// <summary>
+        /// Object Replication Metadata
+        /// </summary>
+        public IDictionary<string, IDictionary<string, string> > ObjectReplicationSourceProperties { get; internal set; }
     }
 }
