@@ -132,46 +132,46 @@ namespace Azure.Storage.Blobs.Models
         /// Creates a new BlobProperties instance for mocking.
         /// </summary>
         public static BlobProperties BlobProperties(
-            DateTimeOffset lastModified,
-            LeaseStatus leaseStatus,
-            long contentLength,
-            string contentType,
-            ETag eTag,
-            LeaseState leaseState,
-            string contentEncoding,
-            string contentDisposition,
-            string contentLanguage,
-            string cacheControl,
-            long blobSequenceNumber,
-            LeaseDurationType leaseDuration,
-            string acceptRanges,
-            string destinationSnapshot,
-            int blobCommittedBlockCount,
-            bool isIncrementalCopy,
-            bool isServerEncrypted,
-            CopyStatus copyStatus,
-            string encryptionKeySha256,
-            Uri copySource,
-            string encryptionScope,
-            string copyProgress,
-            string accessTier,
-            string copyId,
-            bool accessTierInferred,
-            string copyStatusDescription,
-            string archiveStatus,
-            DateTimeOffset copyCompletedOn,
-            DateTimeOffset accessTierChangedOn,
-            BlobType blobType,
-            string versionId,
-            IDictionary<string, IDictionary<string, string>> objectReplicationSourceProperties,
-            bool isCurrentVersion,
-            string objectReplicationDestinationPolicy,
-            long tagCount,
-            IDictionary<string, string> metadata,
-            DateTimeOffset expiresOn,
-            DateTimeOffset createdOn,
-            bool isSealed,
-            byte[] contentHash)
+            DateTimeOffset lastModified = default,
+            LeaseStatus leaseStatus = default,
+            long contentLength = default,
+            string contentType = default,
+            ETag eTag = default,
+            LeaseState leaseState = default,
+            string contentEncoding = default,
+            string contentDisposition = default,
+            string contentLanguage = default,
+            string cacheControl = default,
+            long blobSequenceNumber = default,
+            LeaseDurationType leaseDuration = default,
+            string acceptRanges = default,
+            string destinationSnapshot = default,
+            int blobCommittedBlockCount = default,
+            bool isIncrementalCopy = default,
+            bool isServerEncrypted = default,
+            CopyStatus copyStatus = default,
+            string encryptionKeySha256 = default,
+            Uri copySource = default,
+            string encryptionScope = default,
+            string copyProgress = default,
+            string accessTier = default,
+            string copyId = default,
+            bool accessTierInferred = default,
+            string copyStatusDescription = default,
+            string archiveStatus = default,
+            DateTimeOffset copyCompletedOn = default,
+            DateTimeOffset accessTierChangedOn = default,
+            BlobType blobType = default,
+            string versionId = default,
+            IList<ObjectReplicationPolicy> objectReplicationSourceProperties = default,
+            bool isLatestVersion = default,
+            string objectReplicationDestinationPolicyId = default,
+            long tagCount = default,
+            IDictionary<string, string> metadata = default,
+            DateTimeOffset expiresOn = default,
+            DateTimeOffset createdOn = default,
+            bool isSealed = default,
+            byte[] contentHash = default)
         {
             return new BlobProperties()
             {
@@ -207,8 +207,8 @@ namespace Azure.Storage.Blobs.Models
                 BlobType = blobType,
                 VersionId = versionId,
                 ObjectReplicationSourceProperties = objectReplicationSourceProperties,
-                IsCurrentVersion = isCurrentVersion,
-                ObjectReplicationDestinationPolicy = objectReplicationDestinationPolicy,
+                IsLatestVersion = isLatestVersion,
+                ObjectReplicationDestinationPolicyId = objectReplicationDestinationPolicyId,
                 TagCount = tagCount,
                 Metadata = metadata,
                 ExpiresOn = expiresOn,
@@ -375,12 +375,12 @@ namespace Azure.Storage.Blobs.Models
         /// Creates a new BlobItem instance for mocking.
         /// </summary>
         public static BlobItem BlobItem(
-           string name,
-           bool deleted,
-           BlobItemProperties properties,
+           string name = default,
+           bool deleted = default,
+           BlobItemProperties properties = default,
            string snapshot = default,
            string versionId = default,
-           bool? isCurrentVersion = default,
+           bool? isLatestVersion = default,
            IDictionary<string, string> metadata = default,
            IDictionary<string, string> tags = default)
         {
@@ -391,7 +391,7 @@ namespace Azure.Storage.Blobs.Models
                 Properties = properties,
                 Snapshot = snapshot,
                 VersionId = versionId,
-                IsCurrentVersion = isCurrentVersion,
+                IsLatestVersion = isLatestVersion,
                 Metadata = metadata,
                 Tags = tags
             };
@@ -509,6 +509,106 @@ namespace Azure.Storage.Blobs.Models
                 Description = description,
                 IsFatal = isFatal,
                 Position = position
+            };
+
+        /// <summary>
+        /// Creates a new BlobTagItem instance for mocking.
+        /// </summary>
+        public static BlobTagItem BlobTagItem(
+            string blobName = default,
+            string blobContainerName = default)
+            => new BlobTagItem
+            {
+                BlobName = blobName,
+                BlobContainerName = blobContainerName
+            };
+
+        /// <summary>
+        /// Creates a new ObjectReplicationPolicy instance for mocking.
+        /// </summary>
+        public static ObjectReplicationPolicy ObjectReplicationPolicy(
+            string policyId,
+            IList<ObjectReplicationRule> rules)
+            => new ObjectReplicationPolicy
+            {
+                PolicyId = policyId,
+                Rules = rules
+            };
+
+        /// <summary>
+        /// Creates a new ObjectReplicationRule instance for mocking.
+        /// </summary>
+        public static ObjectReplicationRule ObjectReplicationRule(
+            string ruleId,
+            ObjectReplicationStatus replicationStatus)
+            => new ObjectReplicationRule
+            {
+                RuleId = ruleId,
+                ReplicationStatus = replicationStatus
+            };
+
+        /// <summary>
+        /// Creates a new BlobDownloadDetails instance for mocking.
+        /// </summary>
+        public static BlobDownloadDetails BlobDownloadDetails(
+            DateTimeOffset lastModified,
+            IDictionary<string, string> metadata,
+            string contentRange,
+            string contentEncoding,
+            string cacheControl,
+            string contentDisposition,
+            string contentLanguage,
+            long blobSequenceNumber,
+            DateTimeOffset copyCompletedOn,
+            string copyStatusDescription,
+            string copyId,
+            string copyProgress,
+            Uri copySource,
+            CopyStatus copyStatus,
+            LeaseDurationType leaseDuration,
+            LeaseState leaseState,
+            LeaseStatus leaseStatus,
+            string acceptRanges,
+            int blobCommittedBlockCount,
+            bool isServerEncrypted,
+            string encryptionKeySha256,
+            string encryptionScope,
+            byte[] blobContentHash,
+            long tagCount,
+            string versionId,
+            bool isSealed,
+            IList<ObjectReplicationPolicy> objectReplicationSourceProperties,
+            string objectReplicationDestinationPolicy)
+            => new BlobDownloadDetails
+            {
+                LastModified = lastModified,
+                Metadata = metadata,
+                ContentRange = contentRange,
+                ContentEncoding = contentEncoding,
+                CacheControl = cacheControl,
+                ContentDisposition = contentDisposition,
+                ContentLanguage = contentLanguage,
+                BlobSequenceNumber = blobSequenceNumber,
+                CopyCompletedOn = copyCompletedOn,
+                CopyStatusDescription = copyStatusDescription,
+                CopyId = copyId,
+                CopyProgress = copyProgress,
+                CopySource = copySource,
+                CopyStatus = copyStatus,
+                LeaseDuration = leaseDuration,
+                LeaseState = leaseState,
+                LeaseStatus = leaseStatus,
+                AcceptRanges = acceptRanges,
+                BlobCommittedBlockCount = blobCommittedBlockCount,
+                IsServerEncrypted = isServerEncrypted,
+                EncryptionKeySha256 = encryptionKeySha256,
+                EncryptionScope = encryptionScope,
+                BlobContentHash = blobContentHash,
+                TagCount = tagCount,
+                VersionId = versionId,
+                IsSealed = isSealed,
+                ObjectReplicationSourceProperties = objectReplicationSourceProperties,
+                ObjectReplicationDestinationPolicyId = objectReplicationDestinationPolicy
             };
     }
 }

@@ -2998,7 +2998,7 @@ namespace Azure.Storage.Files.DataLake.Tests
 
             DataLakeFileScheduleDeletionOptions options = new DataLakeFileScheduleDeletionOptions(
                 new TimeSpan(hours: 1, minutes: 0, seconds: 0),
-                DataLakeFileExpirationOffset.Now);
+                DataLakeFileExpirationOrigin.Now);
 
             // Act
             Response<PathInfo> expiryResponse = await file.ScheduleDeletionAsync(options);
@@ -3019,7 +3019,7 @@ namespace Azure.Storage.Files.DataLake.Tests
             DataLakeFileClient file = await test.FileSystem.CreateFileAsync(GetNewFileName());
             DataLakeFileScheduleDeletionOptions options = new DataLakeFileScheduleDeletionOptions(
                 new TimeSpan(hours: 1, minutes: 0, seconds: 0),
-                DataLakeFileExpirationOffset.CreationTime);
+                DataLakeFileExpirationOrigin.CreationTime);
 
             // Act
             Response <PathInfo> expiryResponse = await file.ScheduleDeletionAsync(options);
@@ -3038,7 +3038,7 @@ namespace Azure.Storage.Files.DataLake.Tests
             DataLakeFileClient file = InstrumentClient(test.FileSystem.GetFileClient(GetNewFileName()));
             DataLakeFileScheduleDeletionOptions options = new DataLakeFileScheduleDeletionOptions(
                 new TimeSpan(hours: 1, minutes: 0, seconds: 0),
-                DataLakeFileExpirationOffset.Now);
+                DataLakeFileExpirationOrigin.Now);
 
             // Act
             await TestHelper.AssertExpectedExceptionAsync<RequestFailedException>(
@@ -3169,7 +3169,7 @@ namespace Azure.Storage.Files.DataLake.Tests
             DataLakeQueryCsvTextConfiguration csvTextConfiguration = new DataLakeQueryCsvTextConfiguration
             {
                 ColumnSeparator = ",",
-                FieldQuote = '"',
+                QuotationCharacter = '"',
                 EscapeCharacter = '\\',
                 RecordSeparator = "\n",
                 HasHeaders = false
