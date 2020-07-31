@@ -170,7 +170,7 @@ namespace Azure.Storage.Blobs.ChangeFeed
             BlobContainerClient containerClient,
             ChangeFeedCursor cursor)
         {
-            if (containerClient.Uri.ToString().GetHashCode() != cursor.UrlHash)
+            if (containerClient.Uri.AbsoluteUri.GetHashCode() != cursor.UrlHash)
             {
                 throw new ArgumentException("Cursor URL does not match container URL");
             }
