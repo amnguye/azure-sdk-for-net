@@ -149,15 +149,30 @@ namespace Azure.Storage.Blobs
             options ??= new BlobClientOptions();
             _authenticationPolicy = StorageClientOptions.GetAuthenticationPolicy(conn.Credentials);
 
-            _clientConfiguration = new BlobClientConfiguration(
+            if (conn.Credentials is AzureSasCredential)
+            {
+                _clientConfiguration = new BlobClientConfiguration(
                 pipeline: options.Build(_authenticationPolicy),
-                sharedKeyCredential: conn.Credentials as StorageSharedKeyCredential,
+                sharedKeyCredential: conn.Credentials as AzureSasCredential,
                 clientDiagnostics: new ClientDiagnostics(options),
                 version: options.Version,
                 customerProvidedKey: options.CustomerProvidedKey,
                 transferValidation: options.TransferValidation,
                 encryptionScope: options.EncryptionScope,
                 trimBlobNameSlashes: options.TrimBlobNameSlashes);
+            }
+            else
+            {
+                _clientConfiguration = new BlobClientConfiguration(
+                    pipeline: options.Build(_authenticationPolicy),
+                    sharedKeyCredential: conn.Credentials as StorageSharedKeyCredential,
+                    clientDiagnostics: new ClientDiagnostics(options),
+                    version: options.Version,
+                    customerProvidedKey: options.CustomerProvidedKey,
+                    transferValidation: options.TransferValidation,
+                    encryptionScope: options.EncryptionScope,
+                    trimBlobNameSlashes: options.TrimBlobNameSlashes);
+            }
 
             _clientSideEncryption = options._clientSideEncryptionOptions?.Clone();
             _serviceRestClient = BuildServiceRestClient(_uri);

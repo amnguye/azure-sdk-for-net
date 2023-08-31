@@ -823,7 +823,7 @@ namespace Azure.Storage
                 accountName != null && accountKey != null && sharedAccessSignature == null
                 ? new StorageSharedKeyCredential(accountName, accountKey/*, accountKeyName */)
                 : (object)(accountKey == null /* && accountKeyName == null */ && sharedAccessSignature != null
-                    ? new SharedAccessSignatureCredentials(sharedAccessSignature)
+                    ? new AzureSasCredential(sharedAccessSignature)
                     : null);
         }
 

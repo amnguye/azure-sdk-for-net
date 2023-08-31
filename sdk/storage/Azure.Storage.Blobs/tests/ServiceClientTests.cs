@@ -57,6 +57,30 @@ namespace Azure.Storage.Blobs.Test
         }
 
         [RecordedTest]
+        public async Task Ctor_ConnectionStringSas()
+        {
+            // Arrange
+            var accountName = "accountName";
+            var accountKey = Convert.ToBase64String(new byte[] { 0, 1, 2, 3, 4, 5 });
+
+            string connectionString = $"DefaultEndpointsProtocol=https;AccountName={accountName};SharedAccessSignature={ };EndpointSuffix=core.windows.net";
+
+            // Act
+            BlobServiceClient service = InstrumentClient(new BlobServiceClient(connectionString));
+
+            var builder1 = new BlobUriBuilder(service.Uri);
+
+            // Check if we're authenticating properly.
+            BlobServiceProperties properties = await service.GetPropertiesAsync();
+
+            // Assert
+            Assert.IsEmpty(builder1.BlobContainerName);
+            Assert.IsEmpty(builder1.BlobName);
+            Assert.AreEqual(accountName, builder1.AccountName);
+            Assert.IsNotNull(properties);
+        }
+
+        [RecordedTest]
         public void Ctor_Uri()
         {
             var accountName = "accountName";
