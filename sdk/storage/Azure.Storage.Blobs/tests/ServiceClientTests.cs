@@ -60,13 +60,22 @@ namespace Azure.Storage.Blobs.Test
         public async Task Ctor_ConnectionStringSas()
         {
             // Arrange
-            var accountName = "accountName";
-            var accountKey = Convert.ToBase64String(new byte[] { 0, 1, 2, 3, 4, 5 });
+            TestConstants constants = TestConstants.Create(this);
+            string accountName = constants.Sas.Account;
+            Uri serviceUri = new Uri(Tenants.TestConfigDefault.BlobServiceEndpoint);
+            Uri secondaryUri = new Uri(Tenants.TestConfigDefault.BlobServiceSecondaryEndpoint);
 
-            string connectionString = $"DefaultEndpointsProtocol=https;AccountName={accountName};SharedAccessSignature={ };EndpointSuffix=core.windows.net";
+            AccountSasBuilder builder = new AccountSasBuilder(
+                AccountSasPermissions.Read | AccountSasPermissions.Write,
+                DateTimeOffset.UtcNow.AddHours(1),
+                AccountSasServices.Blobs,
+                AccountSasResourceTypes.All);
+            SasQueryParameters sasParams = builder.ToSasQueryParameters(constants.Sas.SharedKeyCredential);
+
+            var connectionString = new StorageConnectionString(new AzureSasCredential(sasParams.ToString()), blobStorageUri: (serviceUri, secondaryUri));
 
             // Act
-            BlobServiceClient service = InstrumentClient(new BlobServiceClient(connectionString));
+            BlobServiceClient service = InstrumentClient(new BlobServiceClient(connectionString.ToString(true)));
 
             var builder1 = new BlobUriBuilder(service.Uri);
 
@@ -1203,6 +1212,12 @@ namespace Azure.Storage.Blobs.Test
                  new InvalidOperationException("SAS Uri cannot be generated. builder.Services does specify Blobs. builder.Services must either specify Blobs or specify all Services are accessible in the value."));
         }
         #endregion
+
+        #region Parent and Child Client Tests
+        [RecordedTest]
+        public void GetContainerClient_ConnectionStringSas()
+        { }
+        #endregion Parent and Child Client Tests
 
         [RecordedTest]
         public void CanMockClientConstructors()

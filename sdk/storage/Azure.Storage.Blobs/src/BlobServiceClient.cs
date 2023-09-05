@@ -153,7 +153,7 @@ namespace Azure.Storage.Blobs
             {
                 _clientConfiguration = new BlobClientConfiguration(
                 pipeline: options.Build(_authenticationPolicy),
-                sharedKeyCredential: conn.Credentials as AzureSasCredential,
+                sasCredential: conn.Credentials as AzureSasCredential,
                 clientDiagnostics: new ClientDiagnostics(options),
                 version: options.Version,
                 customerProvidedKey: options.CustomerProvidedKey,
