@@ -130,17 +130,6 @@ namespace Azure.Storage.DataMovement.Files.Shares
         ///
         /// Applies to upload and copy transfers.
         ///
-        /// Preserves Metadata from the source by default.
-        /// </summary>
-#pragma warning disable CA2227 // Collection properties should be readonly
-        public DataTransferProperty<Metadata> DirectoryMetadata { get; set; }
-#pragma warning restore CA2227 // Collection properties should be readonly
-
-        /// <summary>
-        /// Optional. Defines custom metadata to set on the destination resource.
-        ///
-        /// Applies to upload and copy transfers.
-        ///
         /// Preserves Metdata from the source by default.
         /// </summary>
 #pragma warning disable CA2227 // Collection properties should be readonly

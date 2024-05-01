@@ -13,7 +13,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
 {
     internal class ShareDirectoryStorageResourceContainer : StorageResourceContainerInternal
     {
-        internal ShareFileStorageResourceOptions ResourceOptions { get; set; }
+        internal ShareDirectoryStorageResourceOptions ResourceOptions { get; set; }
         internal PathScanner PathScanner { get; set; } = PathScanner.Singleton.Value;
 
         internal ShareDirectoryClient ShareDirectoryClient { get; }
@@ -22,7 +22,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
 
         public override string ProviderId => "share";
 
-        internal ShareDirectoryStorageResourceContainer(ShareDirectoryClient shareDirectoryClient, ShareFileStorageResourceOptions options)
+        internal ShareDirectoryStorageResourceContainer(ShareDirectoryClient shareDirectoryClient, ShareDirectoryStorageResourceOptions options)
         {
             ShareDirectoryClient = shareDirectoryClient;
             ResourceOptions = options;
@@ -37,7 +37,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
                 dir = dir.GetSubdirectoryClient(pathSegment);
             }
             ShareFileClient file = dir.GetFileClient(pathSegments.Last());
-            return new ShareFileStorageResource(file, ResourceOptions);
+            return new ShareFileStorageResource(file, ResourceOptions.FileOptions);
         }
 
         protected override async IAsyncEnumerable<StorageResource> GetStorageResourcesAsync(
@@ -48,7 +48,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
             {
                 if (file != default)
                 {
-                    yield return new ShareFileStorageResource(file, ResourceOptions);
+                    yield return new ShareFileStorageResource(file, ResourceOptions.FileOptions);
                 }
                 else
                 {
@@ -65,17 +65,17 @@ namespace Azure.Storage.DataMovement.Files.Shares
         protected override StorageResourceCheckpointData GetDestinationCheckpointData()
         {
             return new ShareFileDestinationCheckpointData(
-                contentType: ResourceOptions?.ContentType,
-                contentEncoding: ResourceOptions?.ContentEncoding,
-                contentLanguage: ResourceOptions?.ContentLanguage,
-                contentDisposition: ResourceOptions?.ContentDisposition,
-                cacheControl: ResourceOptions?.CacheControl,
-                fileAttributes: ResourceOptions?.FileAttributes,
-                filePermissionKey: ResourceOptions?.FilePermissionKey,
-                fileCreatedOn: ResourceOptions?.FileCreatedOn,
-                fileLastWrittenOn: ResourceOptions?.FileLastWrittenOn,
-                fileChangedOn: ResourceOptions?.FileChangedOn,
-                fileMetadata: ResourceOptions?.FileMetadata,
+                contentType: ResourceOptions?.FileOptions?.ContentType,
+                contentEncoding: ResourceOptions?.FileOptions?.ContentEncoding,
+                contentLanguage: ResourceOptions?.FileOptions?.ContentLanguage,
+                contentDisposition: ResourceOptions?.FileOptions?.ContentDisposition,
+                cacheControl: ResourceOptions?.FileOptions?.CacheControl,
+                fileAttributes: ResourceOptions?.FileOptions?.FileAttributes,
+                filePermissionKey: ResourceOptions?.FileOptions?.FilePermissionKey,
+                fileCreatedOn: ResourceOptions?.FileOptions?.FileCreatedOn,
+                fileLastWrittenOn: ResourceOptions?.FileOptions?.FileLastWrittenOn,
+                fileChangedOn: ResourceOptions?.FileOptions?.FileChangedOn,
+                fileMetadata: ResourceOptions?.FileOptions?.FileMetadata,
                 directoryMetadata: ResourceOptions?.DirectoryMetadata);
         }
 
