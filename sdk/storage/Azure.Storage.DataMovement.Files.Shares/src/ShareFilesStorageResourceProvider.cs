@@ -241,7 +241,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
                 checkpointData = ShareFileDestinationCheckpointData.Deserialize(stream);
             }
 
-            ShareFileStorageResourceOptions options = new()
+            ShareFileStorageResourceOptions fileOptions = new()
             {
                 FileAttributes = checkpointData.FileAttributes,
                 FilePermissionKey = checkpointData.FilePermissionKey,
@@ -253,13 +253,17 @@ namespace Azure.Storage.DataMovement.Files.Shares
                 FileCreatedOn = checkpointData.FileCreatedOn,
                 FileLastWrittenOn = checkpointData.FileLastWrittenOn,
                 FileChangedOn = checkpointData.FileChangedOn,
-                DirectoryMetadata = checkpointData.DirectoryMetadata,
                 FileMetadata = checkpointData.FileMetadata,
+            };
+            ShareDirectoryStorageResourceOptions directoryOptions = new()
+            {
+                DirectoryMetadata = checkpointData.DirectoryMetadata,
+                FileOptions = fileOptions
             };
 
             return Task.FromResult(properties.IsContainer
-                ? FromDirectory(properties.DestinationUri.AbsoluteUri, options)
-                : FromFile(properties.DestinationUri.AbsoluteUri, options));
+                ? FromDirectory(properties.DestinationUri.AbsoluteUri, directoryOptions)
+                : FromFile(properties.DestinationUri.AbsoluteUri, fileOptions));
         }
 
         /// <summary>
@@ -294,7 +298,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
         /// <returns>
         /// The configured storage resource.
         /// </returns>
-        public StorageResource FromDirectory(string directoryUri, ShareFileStorageResourceOptions options = default)
+        public StorageResource FromDirectory(string directoryUri, ShareDirectoryStorageResourceOptions options = default)
         {
             ShareDirectoryClient client = _credentialType switch
             {
@@ -348,7 +352,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
         /// </returns>
         public StorageResource FromClient(
             ShareDirectoryClient client,
-            ShareFileStorageResourceOptions options = default)
+            ShareDirectoryStorageResourceOptions options = default)
         {
             return new ShareDirectoryStorageResourceContainer(client, options);
         }
