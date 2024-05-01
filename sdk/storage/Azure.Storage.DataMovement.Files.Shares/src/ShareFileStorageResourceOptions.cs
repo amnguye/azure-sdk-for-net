@@ -97,7 +97,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
         ///
         /// By default preserves the File Attributes from the source.
         /// </summary>
-        public DataTransferProperty<NtfsFileAttributes?> FileAttributes { get; set; }
+        public DataTransferContainerProperty<NtfsFileAttributes?> FileAttributes { get; set; }
 
         /// <summary>
         /// The key of the file permission.
@@ -109,7 +109,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
         ///
         /// By default preserves the File Created On Time from the source.
         /// </summary>
-        public DataTransferProperty<DateTimeOffset?> FileCreatedOn { get; set; }
+        public DataTransferContainerProperty<DateTimeOffset?> FileCreatedOn { get; set; }
 
         /// <summary>
         /// The last write time of the file.
@@ -123,7 +123,7 @@ namespace Azure.Storage.DataMovement.Files.Shares
         ///
         /// By default preserves the File Changed On Time from the source.
         /// </summary>
-        public DataTransferProperty<DateTimeOffset?> FileChangedOn { get; set; }
+        public DataTransferContainerProperty<DateTimeOffset?> FileChangedOn { get; set; }
 
         /// <summary>
         /// Optional. Defines custom metadata to set on the destination resource.
