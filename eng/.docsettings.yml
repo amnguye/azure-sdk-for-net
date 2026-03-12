@@ -22,6 +22,9 @@ omitted_paths:
   - tools/*
   - sdk/**/tools/*
 
+excludePaths:
+  - sdk/storage/Azure.Storage.DataMovement.Blobs.Files.Shares
+
 language: net
 root_check_enabled: True
 
