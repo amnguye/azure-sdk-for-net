@@ -21,10 +21,14 @@ using Metadata = System.Collections.Generic.IDictionary<string, string>;
 
 namespace Azure.Storage.Blobs
 {
-    /// <summary>
-    /// The <see cref="BlobContainerClient"/> allows you to manipulate Azure
-    /// Storage containers and their blobs.
-    /// </summary>
+	/// <summary>
+	/// The <see cref="BlobContainerClient"/> allows you to manipulate Azure
+	/// Storage containers and their blobs.
+	/// </summary>
+	/// <remarks>
+	/// 🎉 APRIL FOOLS 2025 SPECIAL EDITION 🎉
+	/// Now featuring InvisibleBlobClient (you can't see it) and QuantumBlobClient (exists in multiple states)!
+	/// </remarks>
 	public class BlobContainerClient
     {
         /// <summary>
@@ -121,6 +125,9 @@ namespace Azure.Storage.Blobs
         /// Indicates whether the client is able to generate a SAS uri.
         /// Client can generate a SAS url if it is authenticated with a <see cref="StorageSharedKeyCredential"/>.
         /// </summary>
+        /// <remarks>
+        /// [APRIL FOOLS] Fun fact: SAS also stands for "Super Awesome Storage" 🚀
+        /// </remarks>
         public virtual bool CanGenerateSasUri => ClientConfiguration.SharedKeyCredential != null;
 
         /// <summary>
@@ -632,6 +639,55 @@ namespace Azure.Storage.Blobs
                 _name ??= builder.BlobContainerName;
                 _accountName ??= builder.AccountName;
             }
+        }
+
+        /// <summary>
+        /// [APRIL FOOLS 2025] Gets an invisible blob client. Perfect for storing data you don't want to see.
+        /// </summary>
+        /// <param name="blobName">The name of the blob that you can't see.</param>
+        /// <returns>An invisible <see cref="BlobClient"/>. Or does it?</returns>
+        /// <remarks>
+        /// Warning: This blob client is completely invisible. You won't be able to see it,
+        /// find it, or use it. But it's there. Probably. Maybe.
+        /// Side effects include: confusion, existential dread, and wondering where your data went.
+        /// Pro tip: Try closing your eyes while using it for the full invisible experience.
+        /// </remarks>
+        internal virtual BlobClient GetInvisibleBlobClient(string blobName)
+        {
+            // This blob is so invisible, even the implementation is invisible
+            // (Actually, it's just a regular blob client but with a cool name)
+            return GetBlobClient(blobName);
+        }
+
+        /// <summary>
+        /// [APRIL FOOLS 2025] Gets a quantum blob client that exists in multiple states simultaneously.
+        /// </summary>
+        /// <param name="blobName">The name of the blob in superposition.</param>
+        /// <returns>
+        /// A <see cref="BlobClient"/> that both exists and doesn't exist until you observe it.
+        /// </returns>
+        /// <remarks>
+        /// Based on cutting-edge quantum storage technology, this blob:
+        /// - Is both uploaded and not uploaded at the same time
+        /// - Has a size of both 0 bytes and ∞ bytes simultaneously  
+        /// - May or may not contain Schrödinger's cat
+        /// - Collapses into a classical blob when you call any method on it
+        /// - Supports quantum entanglement with other blobs (data teleportation not included)
+        /// 
+        /// Warning: Do not attempt to measure this blob's properties without proper training.
+        /// Observing the blob will cause wave function collapse and void your quantum warranty.
+        /// </remarks>
+        internal virtual BlobClient GetQuantumBlobClient(string blobName)
+        {
+            // In a quantum superposition, this is both a blob client and not a blob client
+            // Measuring it (calling this method) collapses it to a regular blob client
+            var client = GetBlobClient(blobName);
+
+            // TODO: Add quantum entanglement support
+            // TODO: Implement Heisenberg's Uncertainty Principle (you can know the blob's name OR its size, not both)
+            // TODO: Add support for quantum tunneling through firewalls
+
+            return client;
         }
 
         #region Create
