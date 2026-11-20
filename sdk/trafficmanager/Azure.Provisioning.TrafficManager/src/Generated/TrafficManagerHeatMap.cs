@@ -18,7 +18,7 @@ namespace Azure.Provisioning.TrafficManager
         private BicepValue<ResourceIdentifier> _id;
         private BicepValue<string> _name;
         private HeatMapProperties _properties;
-        private ResourceReference<TrafficManagerProfile> _parent;
+        private ProvisioningResourceReference<TrafficManagerProfile> _parent;
 
         /// <summary> Creates a new TrafficManagerHeatMap. </summary>
         /// <param name="bicepIdentifier"> The bicep identifier name. </param>
@@ -82,7 +82,7 @@ namespace Azure.Provisioning.TrafficManager
         {
             get
             {
-                return Properties.StartsOn;
+                return Properties is null ? default : Properties.StartsOn;
             }
         }
 
@@ -91,7 +91,7 @@ namespace Azure.Provisioning.TrafficManager
         {
             get
             {
-                return Properties.EndsOn;
+                return Properties is null ? default : Properties.EndsOn;
             }
         }
 
@@ -100,7 +100,7 @@ namespace Azure.Provisioning.TrafficManager
         {
             get
             {
-                return Properties.Endpoints;
+                return Properties is null ? default : Properties.Endpoints;
             }
         }
 
@@ -109,7 +109,7 @@ namespace Azure.Provisioning.TrafficManager
         {
             get
             {
-                return Properties.TrafficFlows;
+                return Properties is null ? default : Properties.TrafficFlows;
             }
         }
 
@@ -120,7 +120,7 @@ namespace Azure.Provisioning.TrafficManager
             _id = DefineProperty<ResourceIdentifier>(nameof(Id), new string[] { "id" }, isOutput: true);
             _name = DefineProperty<string>(nameof(Name), new string[] { "name" }, isRequired: true);
             _properties = DefineModelProperty<HeatMapProperties>(nameof(Properties), new string[] { "properties" });
-            _parent = DefineResource<TrafficManagerProfile>(nameof(Parent), new string[] { "parent" }, isRequired: true);
+            _parent = new ProvisioningResourceReference<TrafficManagerProfile>(DefineProperty<string>(nameof(Parent), new string[] { "parent" }));
             DefineAdditionalProperties();
         }
 

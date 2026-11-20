@@ -33,6 +33,12 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
         /// <summary> Initializes a new instance of <see cref="ContainerServiceFleetUpdateStage"/>. </summary>
         /// <param name="name"> The name of the stage. Must be unique within the UpdateRun. </param>
         /// <param name="groups"> Defines the groups to be executed in parallel in this stage. Duplicate groups are not allowed. Min size: 1. </param>
+        /// <param name="memberSelector">
+        /// Select the members of the stage.
+        ///   * If specified without UpdateGroup, one implicit group containing the selected members will be created.
+        ///   * If specified with UpdateGroup, members will be pre-filtered before group-level selection logic is applied.
+        ///   * If not specified, group-level selection logic will be used.
+        /// </param>
         /// <param name="afterStageWaitInSeconds"> The time in seconds to wait at the end of this stage before starting the next one. Defaults to 0 seconds if unspecified. </param>
         /// <param name="maxConcurrency">
         /// The max number of upgrades that can run concurrently across all groups in this stage.
@@ -51,10 +57,11 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
         /// <param name="beforeGates"> A list of Gates that will be created before this Stage is executed. </param>
         /// <param name="afterGates"> A list of Gates that will be created after this Stage is executed. </param>
         /// <param name="additionalBinaryDataProperties"> Keeps track of any properties unknown to the library. </param>
-        internal ContainerServiceFleetUpdateStage(string name, IList<ContainerServiceFleetUpdateGroup> groups, int? afterStageWaitInSeconds, string maxConcurrency, IList<ContainerServiceFleetGateConfiguration> beforeGates, IList<ContainerServiceFleetGateConfiguration> afterGates, IDictionary<string, BinaryData> additionalBinaryDataProperties)
+        internal ContainerServiceFleetUpdateStage(string name, IList<ContainerServiceFleetUpdateGroup> groups, MemberSelector memberSelector, int? afterStageWaitInSeconds, string maxConcurrency, IList<ContainerServiceFleetGateConfiguration> beforeGates, IList<ContainerServiceFleetGateConfiguration> afterGates, IDictionary<string, BinaryData> additionalBinaryDataProperties)
         {
             Name = name;
             Groups = groups;
+            MemberSelector = memberSelector;
             AfterStageWaitInSeconds = afterStageWaitInSeconds;
             MaxConcurrency = maxConcurrency;
             BeforeGates = beforeGates;
@@ -67,6 +74,14 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
 
         /// <summary> Defines the groups to be executed in parallel in this stage. Duplicate groups are not allowed. Min size: 1. </summary>
         public IList<ContainerServiceFleetUpdateGroup> Groups { get; }
+
+        /// <summary>
+        /// Select the members of the stage.
+        ///   * If specified without UpdateGroup, one implicit group containing the selected members will be created.
+        ///   * If specified with UpdateGroup, members will be pre-filtered before group-level selection logic is applied.
+        ///   * If not specified, group-level selection logic will be used.
+        /// </summary>
+        internal MemberSelector MemberSelector { get; set; }
 
         /// <summary> The time in seconds to wait at the end of this stage before starting the next one. Defaults to 0 seconds if unspecified. </summary>
         public int? AfterStageWaitInSeconds { get; set; }
@@ -92,5 +107,18 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
 
         /// <summary> A list of Gates that will be created after this Stage is executed. </summary>
         public IList<ContainerServiceFleetGateConfiguration> AfterGates { get; }
+
+        /// <summary> Kubernetes-style label selector for selecting Fleet members, e.g. `env=production`. </summary>
+        public string MemberSelectorByLabel
+        {
+            get
+            {
+                return MemberSelector is null ? default : MemberSelector.ByLabel;
+            }
+            set
+            {
+                MemberSelector = new MemberSelector(value);
+            }
+        }
     }
 }

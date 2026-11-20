@@ -20,7 +20,7 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
         /// <summary> Initializes a new instance of <see cref="ContainerServiceFleetUpdateGroup"/>. </summary>
         /// <param name="name">
         /// Name of the group.
-        /// It must match a group name of an existing fleet member. 
+        /// It must match a group name of an existing fleet member.
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
         public ContainerServiceFleetUpdateGroup(string name)
@@ -35,7 +35,7 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
         /// <summary> Initializes a new instance of <see cref="ContainerServiceFleetUpdateGroup"/>. </summary>
         /// <param name="name">
         /// Name of the group.
-        /// It must match a group name of an existing fleet member. 
+        /// It must match a group name of an existing fleet member.
         /// </param>
         /// <param name="maxConcurrency">
         /// The max number of upgrades that can run concurrently in this specific group.
@@ -52,13 +52,21 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
         ///     • "100%" --&gt; “all at once”, up to all members for this group upgrade at the same time.
         ///     • "25%" --&gt; up to 25% of the members in the group will be upgraded at the same time.
         /// </param>
+        /// <param name="memberSelector">
+        /// Select the members of the group.
+        ///   * If specified, label-based selection will override group name based selection,
+        ///     and Name is only used as an identifier.
+        ///   * If not specified, group name based selection will be used, and Name must match a
+        ///     group name of an existing fleet member.
+        /// </param>
         /// <param name="beforeGates"> A list of Gates that will be created before this Group is executed. </param>
         /// <param name="afterGates"> A list of Gates that will be created after this Group is executed. </param>
         /// <param name="additionalBinaryDataProperties"> Keeps track of any properties unknown to the library. </param>
-        internal ContainerServiceFleetUpdateGroup(string name, string maxConcurrency, IList<ContainerServiceFleetGateConfiguration> beforeGates, IList<ContainerServiceFleetGateConfiguration> afterGates, IDictionary<string, BinaryData> additionalBinaryDataProperties)
+        internal ContainerServiceFleetUpdateGroup(string name, string maxConcurrency, MemberSelector memberSelector, IList<ContainerServiceFleetGateConfiguration> beforeGates, IList<ContainerServiceFleetGateConfiguration> afterGates, IDictionary<string, BinaryData> additionalBinaryDataProperties)
         {
             Name = name;
             MaxConcurrency = maxConcurrency;
+            MemberSelector = memberSelector;
             BeforeGates = beforeGates;
             AfterGates = afterGates;
             _additionalBinaryDataProperties = additionalBinaryDataProperties;
@@ -66,7 +74,7 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
 
         /// <summary>
         /// Name of the group.
-        /// It must match a group name of an existing fleet member. 
+        /// It must match a group name of an existing fleet member.
         /// </summary>
         public string Name { get; set; }
 
@@ -87,10 +95,32 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
         /// </summary>
         public string MaxConcurrency { get; set; }
 
+        /// <summary>
+        /// Select the members of the group.
+        ///   * If specified, label-based selection will override group name based selection,
+        ///     and Name is only used as an identifier.
+        ///   * If not specified, group name based selection will be used, and Name must match a
+        ///     group name of an existing fleet member.
+        /// </summary>
+        internal MemberSelector MemberSelector { get; set; }
+
         /// <summary> A list of Gates that will be created before this Group is executed. </summary>
         public IList<ContainerServiceFleetGateConfiguration> BeforeGates { get; }
 
         /// <summary> A list of Gates that will be created after this Group is executed. </summary>
         public IList<ContainerServiceFleetGateConfiguration> AfterGates { get; }
+
+        /// <summary> Kubernetes-style label selector for selecting Fleet members, e.g. `env=production`. </summary>
+        public string MemberSelectorByLabel
+        {
+            get
+            {
+                return MemberSelector is null ? default : MemberSelector.ByLabel;
+            }
+            set
+            {
+                MemberSelector = new MemberSelector(value);
+            }
+        }
     }
 }

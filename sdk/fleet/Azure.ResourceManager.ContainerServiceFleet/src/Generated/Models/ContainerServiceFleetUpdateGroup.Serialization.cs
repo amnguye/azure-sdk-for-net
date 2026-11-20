@@ -86,6 +86,11 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
                 writer.WritePropertyName("maxConcurrency"u8);
                 writer.WriteStringValue(MaxConcurrency);
             }
+            if (Optional.IsDefined(MemberSelector))
+            {
+                writer.WritePropertyName("memberSelector"u8);
+                writer.WriteObjectValue(MemberSelector, options);
+            }
             if (Optional.IsCollectionDefined(BeforeGates))
             {
                 writer.WritePropertyName("beforeGates"u8);
@@ -150,6 +155,7 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
             }
             string name = default;
             string maxConcurrency = default;
+            MemberSelector memberSelector = default;
             IList<ContainerServiceFleetGateConfiguration> beforeGates = default;
             IList<ContainerServiceFleetGateConfiguration> afterGates = default;
             IDictionary<string, BinaryData> additionalBinaryDataProperties = new ChangeTrackingDictionary<string, BinaryData>();
@@ -163,6 +169,15 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
                 if (prop.NameEquals("maxConcurrency"u8))
                 {
                     maxConcurrency = prop.Value.GetString();
+                    continue;
+                }
+                if (prop.NameEquals("memberSelector"u8))
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    memberSelector = MemberSelector.DeserializeMemberSelector(prop.Value, options);
                     continue;
                 }
                 if (prop.NameEquals("beforeGates"u8))
@@ -195,10 +210,16 @@ namespace Azure.ResourceManager.ContainerServiceFleet.Models
                 }
                 if (options.Format != "W")
                 {
-                    additionalBinaryDataProperties.Add(prop.Name, BinaryData.FromString(prop.Value.GetRawText()));
+                    additionalBinaryDataProperties.Add(prop.Name, prop.Value.GetUtf8Bytes());
                 }
             }
-            return new ContainerServiceFleetUpdateGroup(name, maxConcurrency, beforeGates ?? new ChangeTrackingList<ContainerServiceFleetGateConfiguration>(), afterGates ?? new ChangeTrackingList<ContainerServiceFleetGateConfiguration>(), additionalBinaryDataProperties);
+            return new ContainerServiceFleetUpdateGroup(
+                name,
+                maxConcurrency,
+                memberSelector,
+                beforeGates ?? new ChangeTrackingList<ContainerServiceFleetGateConfiguration>(),
+                afterGates ?? new ChangeTrackingList<ContainerServiceFleetGateConfiguration>(),
+                additionalBinaryDataProperties);
         }
     }
 }
